@@ -30,7 +30,7 @@ class _PersonPageState extends State<PersonPage> {
   @override
   Widget build(BuildContext context) {
     _getDataRanks();
-    print('المسؤليين');
+    //print('المسؤليين');
     _ac = AppConfig(context);
     return Container(
       child: ListView(

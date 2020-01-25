@@ -48,7 +48,7 @@ class LoginPage extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          print('${_tecuserName.text.trim()}:${_tecPassword.text.trim()}');
+          //print('${_tecuserName.text.trim()}:${_tecPassword.text.trim()}');
 
           if (await checkValid(
               _tecuserName.text.trim(), _tecPassword.text.trim())) {
@@ -164,7 +164,7 @@ class LoginPage extends StatelessWidget {
       return false;
     }
     for (UsersModel user in _users) {
-      print('${user.userName}:${user.password}');
+      //print('${user.userName}:${user.password}');
       if (user.userName == userName && user.password == password) {
         _text = '${user.userName} اهلا بك';
         _icon = Icon(

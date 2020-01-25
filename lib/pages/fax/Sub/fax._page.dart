@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:dialog/dialog.dart';
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:fax/controllers/al_v2/controllers.dart';
 import 'package:fax/controllers/fax/fax.dart';
 import 'package:fax/models/pages/fax_model.dart';
@@ -63,7 +62,7 @@ class _FaxPageState extends State<FaxPage> {
         event.preventDefault();
       }
     });
-    print('الفاكس');
+    //print('الفاكس');
     _ac = AppConfig(context);
     return Container(
       child: ListView(
@@ -805,13 +804,14 @@ class _FaxPageState extends State<FaxPage> {
                               color: Colors.blue,
                             ),
                             onTap: () {
-                              enterData(index);
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _showImageAndDownloud(context, 'عرض الصورة',
-                                        _dataSearch[index].images),
-                              );
+                              if (_dataSearch[index].images != null)
+                                downloudImage(_dataSearch[index].images);
+                              // showDialog(
+                              //   context: context,
+                              //   builder: (BuildContext context) =>
+                              //       _showImageAndDownloud(context, 'عرض الصورة',
+                              //           _dataSearch[index].images),
+                              // );
                             },
                           ),
                         ),
@@ -838,10 +838,14 @@ class _FaxPageState extends State<FaxPage> {
                               },
                             ),
                           )
-                        else
-                          SizedBox(
-                            width: 40,
-                          )
+                        // else
+                        //   SizedBox(
+                        //     width: 40,
+                        //   )
+                        ,
+                        SizedBox(
+                          width: 8.0,
+                        )
                       ],
                     ),
                   );
@@ -1256,7 +1260,8 @@ class _FaxPageState extends State<FaxPage> {
               child: IconButton(
                 icon: Icon(Icons.file_upload),
                 onPressed: () async {
-                  images = await setImage();
+                  images = await uploadFile();
+                  //print(images.first);
                 },
               ),
             ),
@@ -1283,22 +1288,22 @@ class _FaxPageState extends State<FaxPage> {
               if (isAdd) {
                 Map<String, dynamic> mapData = Map<String, dynamic>();
                 enterMapData(mapData);
-                // print(mapData);
+                // //print(mapData);
                 try {
                   response = await postData(strPath, mapData);
                 } catch (e) {
-                  print(e);
+                  //print(e);
                 }
               } else {
                 Map<String, dynamic> mapData = Map<String, dynamic>();
                 mapData['id'] = id.toString();
                 enterMapData(mapData);
-                // print(mapData);
+                // //print(mapData);
                 response = await putData(strPath, mapData);
               }
               if (response.statusCode >= 200 && response.statusCode <= 299) {
-                print(response.body);
-                if (!isAdd) Navigator.of(context).pop();
+                //print(response.body);
+                Navigator.of(context).pop();
                 _tecClear();
                 setState(() {});
               } else {
@@ -1337,7 +1342,7 @@ class _FaxPageState extends State<FaxPage> {
     mapData['person_recieve'] = _personRecieve;
     mapData['is_export'] = _isExport.toString();
     int begin = 0;
-  images.first = image64Data(images.first, begin);
+    images.first = image64Data(images.first, begin);
     if (images.isNotEmpty) {
       String x = images.first;
 
@@ -1385,10 +1390,11 @@ class _FaxPageState extends State<FaxPage> {
             if (done) {
               this._isCheckAll = false;
               _checks.clear();
-              Navigator.of(context).pop();
+              
             } else {
               alert('حدث خطاء أثناء الإتصال بقاعدة البيانات');
             }
+            Navigator.of(context).pop();
             setState(() {});
           },
           textColor: colorNegativeText,
@@ -1423,72 +1429,4 @@ class _FaxPageState extends State<FaxPage> {
     _personSendID = _personList.first.id;
     _personRecieveID = _personList.first.id;
   }
-}
-
-Widget _showImageAndDownloud(BuildContext context, String s, String bytes) {
-  int begin = 0;
-  bytes = image64Data(bytes, begin);
-  print(bytes);
-  return AlertDialog(
-    title: Text(s),
-    content: ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        bytes != null
-            ? Container(
-                height: 200.0,
-                child: imageFromBase64String(bytes),
-              )
-            : Icon(Icons.not_interested),
-      ],
-    ),
-    actions: <Widget>[
-      FlatButton(
-        highlightColor: colorFlatHighLightNegative,
-        hoverColor: colorFlatHoverNegative,
-        onPressed: () async {
-          if (bytes != null) downloudImage(bytes);
-        },
-        textColor: colorNegativeText,
-        child: const Text('حفظ'),
-      ),
-      FlatButton(
-        highlightColor: colorFlatHighLightPositive,
-        hoverColor: colorFlatHoverPositive,
-        onPressed: () async {
-          Navigator.of(context).pop();
-        },
-        textColor: colorPositiveText,
-        child: const Text('الغاء'),
-      ),
-    ],
-  );
-}
-
-String image64Data(String bytes, int begin) {
-  for (int i = 0; i < bytes.toString()?.length; i++) {
-    if (bytes[i].contains(';')) {
-      begin = ++i;
-      begin += 7;
-      break;
-    }
-  }
-  if (bytes.isNotEmpty) bytes = bytes.substring(begin, bytes.length);
-  return bytes;
-}
-
-imageFromBase64String(String base64String) {
-  Uint8List bytes = Base64Codec().decode(base64String);
-  // Uint8List uint8list = base64Url.decode(
-  //     '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');
-  return Image.memory(bytes);
-}
-
-void downloudImage(String link) {
-  var a = html.document.createElement('a');
-  a.setAttribute('href', 'data:application/octet-stream;base64,' + link);
-  a.setAttribute('download', 'image.png');
-  html.document.body.append(a);
-  a.click();
-  a.remove();
 }

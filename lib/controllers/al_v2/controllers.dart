@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-const String domin = 'https://localhost:44392/api';
+const String mainDomin = 'https://localhost:44392';
+const String domin = '$mainDomin/api';
 
 /*Data*/
 //Get all data

@@ -34,7 +34,7 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('الأدمن');
+    //print('الأدمن');
     _ac = AppConfig(context);
     return Container(
       child: ListView(

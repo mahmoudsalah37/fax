@@ -25,7 +25,7 @@ class _RankPageState extends State<RankPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('الرتبة');
+    //print('الرتبة');
     _ac = AppConfig(context);
     return Container(
       child: ListView(

@@ -29,7 +29,7 @@ class _SubClassPageState extends State<SubClassPage> {
   @override
   Widget build(BuildContext context) {
     _getDataSubClass();
-    print('القسم ألفرعي');
+    //print('القسم ألفرعي');
     _ac = AppConfig(context);
     return Container(
       child: ListView(

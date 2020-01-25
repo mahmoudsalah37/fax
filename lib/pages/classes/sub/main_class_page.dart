@@ -28,7 +28,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('القسم الرئيسي');
+    //print('القسم الرئيسي');
     _ac = AppConfig(context);
     return Container(
       child: ListView(
