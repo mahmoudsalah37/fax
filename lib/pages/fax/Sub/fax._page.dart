@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:html' as html;
-import 'dart:typed_data';
 import 'package:dialog/dialog.dart';
 import 'package:fax/controllers/al_v2/controllers.dart';
 import 'package:fax/controllers/fax/fax.dart';
@@ -673,8 +671,10 @@ class _FaxPageState extends State<FaxPage> {
             if (_checks.isNotEmpty) _checks.clear();
             if (_isCheckAll)
               _dataSearch.forEach((data) => _checks.add(data.id));
-            if (_filter != -1)
+            if (_filter != -1 && _isAsending != null)
               _dataSearch = filterTable(_dataSearch, _filter, _isAsending);
+            if (_isAsending == null)
+              _dataSearch = _dataSearch.reversed.toList();
 
             return Scrollbar(
               child: ListView.builder(
@@ -1305,7 +1305,6 @@ class _FaxPageState extends State<FaxPage> {
                 //print(response.body);
                 Navigator.of(context).pop();
                 _tecClear();
-                setState(() {});
               } else {
                 alert('حدث خطاء أثناء الإتصال بقاعدة البيانات');
               }
@@ -1390,7 +1389,6 @@ class _FaxPageState extends State<FaxPage> {
             if (done) {
               this._isCheckAll = false;
               _checks.clear();
-              
             } else {
               alert('حدث خطاء أثناء الإتصال بقاعدة البيانات');
             }

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-const String mainDomin = 'https://localhost:44392';
+const String mainDomin = 'http://localhost:8854';
 const String domin = '$mainDomin/api';
 
 /*Data*/
