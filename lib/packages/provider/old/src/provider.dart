@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:fax/packages/provider/src/delegate_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+import 'delegate_widget.dart';
 
 /// A function that returns true when the update from [previous] to [current]
 /// should notify listeners, if any.
@@ -352,40 +353,33 @@ void main() {
 
   @override
   List<DiagnosticsNode> debugDescribeChildren() {
-    // TODO: implement debugDescribeChildren
     throw UnimplementedError();
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    // TODO: implement debugFillProperties
   }
 
   @override
-  // TODO: implement key
   Key get key => throw UnimplementedError();
 
   @override
   DiagnosticsNode toDiagnosticsNode({String name, DiagnosticsTreeStyle style}) {
-    // TODO: implement toDiagnosticsNode
     throw UnimplementedError();
   }
 
   @override
   String toStringDeep({String prefixLineOne = '', String prefixOtherLines, DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
-    // TODO: implement toStringDeep
     throw UnimplementedError();
   }
 
   @override
   String toStringShallow({String joiner = ', ', DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
-    // TODO: implement toStringShallow
     throw UnimplementedError();
   }
 
   @override
   String toStringShort() {
-    // TODO: implement toStringShort
     throw UnimplementedError();
   }
 }

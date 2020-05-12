@@ -4,44 +4,48 @@
 
 import 'dart:convert';
 
-List<FaxModel> faxModelFromJson(String str) => List<FaxModel>.from(json.decode(str).map((x) => FaxModel.fromJson(x)));
+List<FaxModel> faxModelFromJson(String str) =>
+    List<FaxModel>.from(json.decode(str).map((x) => FaxModel.fromJson(x)));
 
-String faxModelToJson(List<FaxModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String faxModelToJson(List<FaxModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class FaxModel {
-    int id;
-    String title;
-    String nameSend;
-    String nameRecieve;
-    String fromDate;
-    String toDate;
-    String serialFax;
-    String serialFaxInitial;
-    String certificationNumber;
-    String subClass;
-    String personSend;
-    String personRecieve;
-    int isExport;
-    String images;
+  int id;
+  String title;
+  String nameSend;
+  String nameRecieve;
+  String fromDate;
+  String toDate;
+  String serialFax;
+  String serialFaxInitial;
+  String certificationNumber;
+  String subClass;
+  String personSend;
+  String personRecieve;
+  String personSubRecieve;
+  int isExport;
+  String images;
 
-    FaxModel({
-        this.id,
-        this.title,
-        this.nameSend,
-        this.nameRecieve,
-        this.fromDate,
-        this.toDate,
-        this.serialFax,
-        this.serialFaxInitial,
-        this.certificationNumber,
-        this.subClass,
-        this.personSend,
-        this.personRecieve,
-        this.isExport,
-        this.images,
-    });
+  FaxModel({
+    this.id,
+    this.title,
+    this.nameSend,
+    this.nameRecieve,
+    this.fromDate,
+    this.toDate,
+    this.serialFax,
+    this.serialFaxInitial,
+    this.certificationNumber,
+    this.subClass,
+    this.personSend,
+    this.personRecieve,
+    this.personSubRecieve,
+    this.isExport,
+    this.images,
+  });
 
-    factory FaxModel.fromJson(Map<String, dynamic> json) => FaxModel(
+  factory FaxModel.fromJson(Map<String, dynamic> json) => FaxModel(
         id: json["id"],
         title: json["title"],
         nameSend: json["name_send"],
@@ -54,11 +58,12 @@ class FaxModel {
         subClass: json["sub_class"],
         personSend: json["person_send"],
         personRecieve: json["person_recieve"],
+        personSubRecieve: json["person_sub_recieve"],
         isExport: json["is_export"],
         images: json["images"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
         "name_send": nameSend,
@@ -71,7 +76,8 @@ class FaxModel {
         "sub_class": subClass,
         "person_send": personSend,
         "person_recieve": personRecieve,
+        "person_sub_recieve": personSubRecieve,
         "is_export": isExport,
         "images": images,
-    };
+      };
 }

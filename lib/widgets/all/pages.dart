@@ -169,16 +169,17 @@ List<FaxModel> filterTable(List<FaxModel> faxes, int index, bool isAscending) {
           a.nameSend?.toLowerCase()?.compareTo(b.nameSend?.toLowerCase()));
       break;
     case 2:
-      faxes?.sort((a, b) =>
-          a.nameRecieve?.toLowerCase()?.compareTo(b.nameRecieve?.toLowerCase()));
+      faxes?.sort((a, b) => a.nameRecieve
+          ?.toLowerCase()
+          ?.compareTo(b.nameRecieve?.toLowerCase()));
       break;
     case 3:
       faxes?.sort((a, b) =>
           a.fromDate?.toLowerCase()?.compareTo(b.fromDate?.toLowerCase()));
       break;
     case 4:
-      faxes?.sort(
-          (a, b) => a.toDate?.toLowerCase()?.compareTo(b.toDate?.toLowerCase()));
+      faxes?.sort((a, b) =>
+          a.toDate?.toLowerCase()?.compareTo(b.toDate?.toLowerCase()));
       break;
     case 5:
       faxes?.sort((a, b) =>
@@ -208,6 +209,9 @@ List<FaxModel> filterTable(List<FaxModel> faxes, int index, bool isAscending) {
           ?.compareTo(b.personRecieve?.toLowerCase()));
       break;
     case 11:
+      faxes?.sort((a, b) => a.personSubRecieve?.compareTo(b.personSubRecieve));
+      break;
+    case 12:
       faxes?.sort((a, b) => a.isExport?.compareTo(b.isExport));
       break;
     default:

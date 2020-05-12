@@ -1,6 +1,6 @@
-import 'package:fax/packages/provider/src/provider.dart';
 import 'package:flutter/widgets.dart';
 
+import '../provider.dart';
 import 'consumer.dart';
 import 'delegate_widget.dart';
 

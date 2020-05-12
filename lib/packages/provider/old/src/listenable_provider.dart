@@ -65,7 +65,6 @@ class ListenableProvider<T extends Listenable> extends ValueDelegateWidget<T>
     Key key,
     @required _ListenableDelegateMixin<T> delegate,
     // ignore: lines_longer_than_80_chars
-    // TODO: updateShouldNotify for when the listenable instance change with `.value` constructor
     this.child,
   }) : super(key: key, delegate: delegate);
 

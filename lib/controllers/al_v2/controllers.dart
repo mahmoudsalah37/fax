@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-const String mainDomin = 'http://localhost:8854';
+const String mainDomin = 'http://192.168.40.13';
 const String domin = '$mainDomin/api';
 
 /*Data*/
@@ -29,7 +29,6 @@ Future<http.Response> postData(
             'Access-Control-Allow-Origin': '*',
           },
           body: mapData)
-      .whenComplete(() {})
       .catchError((onError) {
     print(onError.toString());
   });

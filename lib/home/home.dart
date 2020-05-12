@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
     ac = AppConfig(context);
     final page = Provider.of<PageModel>(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
       appBar: GradientAppBar(
         title: Text(
           'الفاكسات',

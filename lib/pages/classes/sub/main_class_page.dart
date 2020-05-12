@@ -2,6 +2,7 @@
 // import 'dart:html';
 
 import 'package:dialog/dialog.dart';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:fax/controllers/al_v2/controllers.dart';
 import 'package:fax/controllers/classes/main_class_controller.dart';
 import 'package:fax/models/pages/main_class_model.dart';
@@ -11,6 +12,8 @@ import 'package:fax/styles/page/all/app_config.dart';
 import 'package:fax/widgets/all/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+
+final _controller = ScrollController();
 
 class MainCLassPage extends StatefulWidget {
   _MainCLassPageState createState() => _MainCLassPageState();
@@ -167,7 +170,8 @@ class _MainCLassPageState extends State<MainCLassPage> {
           _headTable(),
           SizedBox(height: 8.0),
           //Body table
-          _bodyTable()
+          _bodyTable(),
+          SizedBox(height: 8.0),
         ],
       ),
     );
@@ -195,6 +199,9 @@ class _MainCLassPageState extends State<MainCLassPage> {
           // Expanded(
           //   child: nameColumnTable('الرقم التسلسلي'),
           // ),
+          SizedBox(
+            width: 15,
+          ),
           Opacity(
             opacity: 0.0,
             child: Padding(
@@ -213,7 +220,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
   //Body table
   Container _bodyTable() {
     return Container(
-      height: _ac.rH(80.0),
+      height: _ac.rH(75.0),
       //rows
       child: FutureBuilder<List<MainClassModel>>(
         future: getDataMaimClasses(),
@@ -228,94 +235,106 @@ class _MainCLassPageState extends State<MainCLassPage> {
             if (_checks.isNotEmpty) _checks.clear();
             if (_isCheckAll)
               _dataSearch.forEach((data) => _checks.add(data.id));
-            return ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: _dataSearch.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
+            return DraggableScrollbar.arrows(
+              backgroundColor: Colors.blue,
+              alwaysVisibleScrollThumb:
+                  true, //use this to make scroll thumb always visible
+              // labelTextBuilder: (double offset) => Text("${offset ~/ 100}"),
+              controller: _controller,
+              child: ListView.builder(
+                controller: _controller,
+                scrollDirection: Axis.vertical,
+                itemCount: _dataSearch.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      StatefulBuilder(
-                        builder: (BuildContext context, setState) {
-                          return Checkbox(
-                            value: _checks.contains(_dataSearch[index].id),
-                            activeColor: colorCheckBox,
-                            onChanged: (bool isCheck) async {
-                              int id = _dataSearch[index].id;
-                              isCheck ? _checks.add(id) : _checks.remove(id);
-                              setState(() {});
-                            },
-                          );
-                        },
-                      ),
-                      Expanded(
-                        child: dataCellRow(_dataSearch[index].name),
-                      ),
-                      // Expanded(
-                      //   child: dataCellRow(_dataSearch[index].id.toString()),
-                      // ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: InkWell(
-                          child: Icon(
-                            Icons.visibility,
-                            color: Colors.blue,
-                          ),
-                          onTap: () {
-                            _tecNameMainClass.text = _dataSearch[index].name;
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildViewDialog(
-                                      context, 'عرض البيانات', index),
+                    child: Row(
+                      children: <Widget>[
+                        StatefulBuilder(
+                          builder: (BuildContext context, setState) {
+                            return Checkbox(
+                              value: _checks.contains(_dataSearch[index].id),
+                              activeColor: colorCheckBox,
+                              onChanged: (bool isCheck) async {
+                                int id = _dataSearch[index].id;
+                                isCheck ? _checks.add(id) : _checks.remove(id);
+                                setState(() {});
+                              },
                             );
                           },
                         ),
-                      ),
-                      //Edit icon
-                      if (currentUser.permission >= 2)
+                        Expanded(
+                          child: dataCellRow(_dataSearch[index].name),
+                        ),
+                        // Expanded(
+                        //   child: dataCellRow(_dataSearch[index].id.toString()),
+                        // ),
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: InkWell(
                             child: Icon(
-                              Icons.edit,
-                              color: Colors.green,
+                              Icons.visibility,
+                              color: Colors.blue,
                             ),
                             onTap: () {
                               _tecNameMainClass.text = _dataSearch[index].name;
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) =>
-                                    _buildAddOrUpdateDialog(
-                                        context,
-                                        'تعديل البيانات',
-                                        _dataSearch[index].id,
-                                        false),
+                                    _buildViewDialog(
+                                        context, 'عرض البيانات', index),
                               );
                             },
                           ),
-                        )
-                      else
+                        ),
+                        //Edit icon
+                        if (currentUser.permission >= 2)
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: InkWell(
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.green,
+                              ),
+                              onTap: () {
+                                _tecNameMainClass.text =
+                                    _dataSearch[index].name;
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      _buildAddOrUpdateDialog(
+                                          context,
+                                          'تعديل البيانات',
+                                          _dataSearch[index].id,
+                                          false),
+                                );
+                              },
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            width: 40,
+                          ),
                         SizedBox(
-                          width: 40,
-                        )
-                    ],
-                  ),
-                );
-              },
+                          width: 15,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           } else if (snapshot.hasError) {}
           return Container(child: Center(child: CircularProgressIndicator()));
@@ -391,7 +410,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
             }
           },
           textColor: colorPositiveText,
-          child: const Text('save'),
+          child: const Text('حفظ'),
         ),
         FlatButton(
           highlightColor: colorFlatHighLightNegative,

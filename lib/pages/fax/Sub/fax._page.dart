@@ -1,5 +1,6 @@
 import 'dart:html' as html;
 import 'package:dialog/dialog.dart';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:fax/controllers/al_v2/controllers.dart';
 import 'package:fax/controllers/fax/fax.dart';
 import 'package:fax/models/pages/fax_model.dart';
@@ -17,6 +18,7 @@ import 'package:fax/controllers/responsible/people_controller.dart' as pc;
 
 // import 'package:dio/dio.dart' as dio;
 final _controller = ScrollController();
+final _controller1 = ScrollController();
 
 class FaxPage extends StatefulWidget {
   _FaxPageState createState() => _FaxPageState();
@@ -33,6 +35,7 @@ class _FaxPageState extends State<FaxPage> {
       _tecToDate = TextEditingController(),
       _tecSerialFax = TextEditingController(),
       _tecSerialFaxIntial = TextEditingController(),
+      _tecPersonSubRecieve = TextEditingController(),
       _tecCertificationNumber = TextEditingController();
   List<int> _checks = List<int>();
   List<FaxModel> _data = List<FaxModel>(), _dataSearch = List<FaxModel>();
@@ -71,7 +74,7 @@ class _FaxPageState extends State<FaxPage> {
           _headPage(context),
           SizedBox(height: 4.0),
           //Body
-          _bodyPage()
+          _bodyPage(), SizedBox(height: 8.0),
         ],
       ),
     );
@@ -194,6 +197,7 @@ class _FaxPageState extends State<FaxPage> {
     _tecToDate.clear();
     _tecSerialFax.clear();
     _tecSerialFaxIntial.clear();
+    _tecPersonSubRecieve.clear();
     _tecCertificationNumber.clear();
     images.clear();
   }
@@ -235,6 +239,40 @@ class _FaxPageState extends State<FaxPage> {
               child: Wrap(
                 direction: Axis.horizontal,
                 children: <Widget>[
+                  _isAsending == false && _filter == 12
+                      ? Icon(Icons.keyboard_arrow_up, size: 10.0)
+                      : _isAsending == true && _filter == 12
+                          ? Container(
+                              width: 20.0,
+                              height: 20.0,
+                              child:
+                                  Icon(Icons.keyboard_arrow_down, size: 10.0))
+                          : Visibility(
+                              visible: false,
+                              child: Icon(Icons.keyboard_hide, size: 10.0),
+                            ),
+                  nameColumnTable('توع الفاكس'),
+                ],
+              ),
+              onTap: () async {
+                if (_filter != 12) _isAsending = null;
+                if (_isAsending == null) {
+                  _isAsending = true;
+                } else if (_isAsending) {
+                  _isAsending = false;
+                } else if (!_isAsending) {
+                  _isAsending = null;
+                }
+                _filter = 12;
+                setState(() {});
+              },
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: <Widget>[
                   _isAsending == false && _filter == 11
                       ? Icon(Icons.keyboard_arrow_up, size: 10.0)
                       : _isAsending == true && _filter == 11
@@ -247,7 +285,7 @@ class _FaxPageState extends State<FaxPage> {
                               visible: false,
                               child: Icon(Icons.keyboard_hide, size: 10.0),
                             ),
-                  nameColumnTable('توع الفاكس'),
+                  nameColumnTable('من ينوب داخل القسم'),
                 ],
               ),
               onTap: () async {
@@ -638,6 +676,9 @@ class _FaxPageState extends State<FaxPage> {
               },
             ),
           ),
+          SizedBox(
+            width: 15,
+          ),
           Opacity(
             opacity: 0.0,
             child: Padding(
@@ -656,7 +697,7 @@ class _FaxPageState extends State<FaxPage> {
   //Body table
   Container _bodyTable() {
     return Container(
-      height: _ac.rH(80.0),
+      height: _ac.rH(100.0) - 176,
       //rows
       child: FutureBuilder<List<FaxModel>>(
         future: getDataFax(),
@@ -676,8 +717,12 @@ class _FaxPageState extends State<FaxPage> {
             if (_isAsending == null)
               _dataSearch = _dataSearch.reversed.toList();
 
-            return Scrollbar(
+            return DraggableScrollbar.arrows(
+              backgroundColor: Colors.blue,
+              alwaysVisibleScrollThumb: true,
+              controller: _controller,
               child: ListView.builder(
+                controller: _controller,
                 scrollDirection: Axis.vertical,
                 itemCount: _dataSearch.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
@@ -719,6 +764,13 @@ class _FaxPageState extends State<FaxPage> {
                         Expanded(
                           child: Tooltip(
                             child: dataCellRow(
+                                _dataSearch[index].personSubRecieve ?? '-'),
+                            message: _dataSearch[index].personSubRecieve ?? '-',
+                          ),
+                        ),
+                        Expanded(
+                          child: Tooltip(
+                            child: dataCellRow(
                                 _dataSearch[index].personRecieve ?? '-'),
                             message: _dataSearch[index].personRecieve ?? '-',
                           ),
@@ -754,6 +806,7 @@ class _FaxPageState extends State<FaxPage> {
                           child:
                               dataCellRow(_dataSearch[index].fromDate ?? '-'),
                         ),
+
                         Expanded(
                           child: Tooltip(
                             child: dataCellRow(
@@ -775,27 +828,7 @@ class _FaxPageState extends State<FaxPage> {
                             message: _dataSearch[index].title ?? '-',
                           ),
                         ),
-                        // Expanded(
-                        //   child: dataCellRow(_dataSearch[index].id?.toString()),
-                        // ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(4.0),
-                        //   child: InkWell(
-                        //     child: Icon(
-                        //       Icons.visibility,
-                        //       color: Colors.blue,
-                        //     ),
-                        //     onTap: () {
-                        //       enterData(index);
-                        //       showDialog(
-                        //         context: context,
-                        //         builder: (BuildContext context) =>
-                        //             _buildViewDialog(
-                        //                 context, 'عرض البيانات', index),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
+
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: InkWell(
@@ -806,12 +839,6 @@ class _FaxPageState extends State<FaxPage> {
                             onTap: () {
                               if (_dataSearch[index].images != null)
                                 downloudImage(_dataSearch[index].images);
-                              // showDialog(
-                              //   context: context,
-                              //   builder: (BuildContext context) =>
-                              //       _showImageAndDownloud(context, 'عرض الصورة',
-                              //           _dataSearch[index].images),
-                              // );
                             },
                           ),
                         ),
@@ -824,25 +851,12 @@ class _FaxPageState extends State<FaxPage> {
                                 Icons.edit,
                                 color: Colors.green,
                               ),
-                              onTap: () {
-                                // enterData(index);
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (BuildContext context) =>
-                                //       _buildAddOrUpdateDialog(
-                                //           context,
-                                //           'تعديل البيانات',
-                                //           _dataSearch[index].id,
-                                //           false),
-                                // );
-                              },
+                              onTap: () {},
                             ),
-                          )
-                        // else
-                        //   SizedBox(
-                        //     width: 40,
-                        //   )
-                        ,
+                          ),
+                        SizedBox(
+                          width: 15,
+                        ),
                         SizedBox(
                           width: 8.0,
                         )
@@ -867,6 +881,7 @@ class _FaxPageState extends State<FaxPage> {
     _tecToDate.text = _dataSearch[index].toDate;
     _tecSerialFax.text = _dataSearch[index].serialFax;
     _tecSerialFaxIntial.text = _dataSearch[index].serialFaxInitial;
+    _tecPersonSubRecieve.text = _dataSearch[index].personSubRecieve;
     _tecCertificationNumber.text = _dataSearch[index].certificationNumber;
     _subClass = _dataSearch[index].subClass;
     _personSend = _dataSearch[index].personSend;
@@ -875,11 +890,12 @@ class _FaxPageState extends State<FaxPage> {
 
   Widget _columnData() {
     return SingleChildScrollView(
+      controller: _controller1,
       child: Form(
         key: _globalKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 8.0),
             Row(
@@ -887,6 +903,9 @@ class _FaxPageState extends State<FaxPage> {
               children: <Widget>[
                 Text('الأقسام الفرعية',
                     style: TextStyle(color: colorPositiveText)),
+                SizedBox(
+                  width: 8.0,
+                ),
                 StatefulBuilder(
                   builder: (BuildContext context, setState) {
                     return DropdownButton<int>(
@@ -910,6 +929,7 @@ class _FaxPageState extends State<FaxPage> {
                     );
                   },
                 ),
+                SizedBox(width: 15.0),
               ],
             ),
             Row(
@@ -917,6 +937,9 @@ class _FaxPageState extends State<FaxPage> {
               children: <Widget>[
                 Text('الشخص المرسل',
                     style: TextStyle(color: colorPositiveText)),
+                SizedBox(
+                  width: 8.0,
+                ),
                 StatefulBuilder(
                   builder: (BuildContext context, setState) {
                     return DropdownButton<int>(
@@ -940,6 +963,7 @@ class _FaxPageState extends State<FaxPage> {
                     );
                   },
                 ),
+                SizedBox(width: 15.0),
               ],
             ),
             Row(
@@ -947,6 +971,9 @@ class _FaxPageState extends State<FaxPage> {
               children: <Widget>[
                 Text('الشخص المستلم',
                     style: TextStyle(color: colorPositiveText)),
+                SizedBox(
+                  width: 8.0,
+                ),
                 StatefulBuilder(
                   builder: (BuildContext context, setState) {
                     return DropdownButton<int>(
@@ -970,76 +997,124 @@ class _FaxPageState extends State<FaxPage> {
                     );
                   },
                 ),
+                SizedBox(width: 15.0),
               ],
             ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                maxLines: null,
-                textAlign: TextAlign.end,
-                controller: _tecTitle,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'عنوان الفاكس',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    textAlign: TextAlign.end,
+                    maxLines: null,
+                    controller: _tecPersonSubRecieve,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'من ينوب عنه',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 15.0),
+              ],
             ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                maxLines: null,
-                textAlign: TextAlign.end,
-                controller: _tecNameSend,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'جه الإرسال',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    textAlign: TextAlign.end,
+                    controller: _tecTitle,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'عنوان الفاكس',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 15.0),
+              ],
             ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                maxLines: null,
-                textAlign: TextAlign.end,
-                controller: _tecNameRecieve,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'جه الإستلام',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    textAlign: TextAlign.end,
+                    controller: _tecNameSend,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'جه الإرسال',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 15.0),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    textAlign: TextAlign.end,
+                    controller: _tecNameRecieve,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'جه الإستلام',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
             ),
             Wrap(
               alignment: WrapAlignment.center,
@@ -1049,6 +1124,7 @@ class _FaxPageState extends State<FaxPage> {
                 Container(
                   width: 180.0,
                   child: TextFormField(
+                    keyboardType: TextInputType.multiline,
                     enabled: true,
                     controller: _tecFromDate,
                     validator: (String v) {
@@ -1085,6 +1161,7 @@ class _FaxPageState extends State<FaxPage> {
                       _tecFromDate.text = _formatter.format(date).toString();
                   },
                 ),
+                SizedBox(width: 15.0),
               ],
             ),
             Wrap(
@@ -1095,6 +1172,7 @@ class _FaxPageState extends State<FaxPage> {
                 Container(
                   width: 180.0,
                   child: TextFormField(
+                    keyboardType: TextInputType.multiline,
                     controller: _tecToDate,
                     enabled: true,
                     validator: (String v) {
@@ -1131,139 +1209,183 @@ class _FaxPageState extends State<FaxPage> {
                       _tecToDate.text = _formatter.format(date).toString();
                   },
                 ),
+                SizedBox(width: 15.0),
               ],
             ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                // keyboardType: TextInputType.number,
-                // inputFormatters: <TextInputFormatter>[
-                //   WhitelistingTextInputFormatter.digitsOnly,
-                // ],
-                textAlign: TextAlign.end,
-                maxLines: null,
-                controller: _tecSerialFax,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'رقم الفاكس',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                textAlign: TextAlign.end,
-                maxLines: null,
-                controller: _tecSerialFaxIntial,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'رقم الفاكس داخل القسم',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: 240.0,
-              child: TextFormField(
-                // keyboardType: TextInputType.number,
-                // inputFormatters: <TextInputFormatter>[
-                //   WhitelistingTextInputFormatter.digitsOnly,
-                // ],
-                textAlign: TextAlign.end,
-                maxLines: null,
-                controller: _tecCertificationNumber,
-                validator: (String v) {
-                  String value = v.trim();
-                  if (value.isEmpty) return 'الخانة فارغة';
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: 'رقم التصديق',
-                  labelStyle: TextStyle(
-                    color: colorLabelText,
-                  ),
-                  hintText: '',
-                  hintStyle: TextStyle(
-                    color: colorHintText,
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: StatefulBuilder(
-                builder: (BuildContext context, setState) {
-                  return ToggleButtons(
-                    borderColor: Colors.green[200],
-                    fillColor: Colors.green,
-                    borderWidth: 2,
-                    selectedBorderColor: Colors.green,
-                    selectedColor: Colors.white,
-                    borderRadius: BorderRadius.circular(20.0),
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'صادرات',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'واردات',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                    onPressed: (int index) {
-                      setState(() {
-                        _isExport = index;
-                        for (int i = 0; i < isSelected.length; i++) {
-                          if (i == index) {
-                            isSelected[i] = true;
-                          } else {
-                            isSelected[i] = false;
-                          }
-                        }
-                      });
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    // keyboardType: TextInputType.number,
+                    // inputFormatters: <TextInputFormatter>[
+                    //   WhitelistingTextInputFormatter.digitsOnly,
+                    // ],
+                    keyboardType: TextInputType.multiline,
+
+                    textAlign: TextAlign.end,
+                    maxLines: null,
+                    controller: _tecSerialFax,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
                     },
-                    isSelected: isSelected,
-                  );
-                },
-              ),
+                    decoration: InputDecoration(
+                      labelText: 'رقم الفاكس',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    textAlign: TextAlign.end,
+                    maxLines: null,
+                    controller: _tecSerialFaxIntial,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'رقم الفاكس داخل القسم',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 240.0,
+                  child: TextFormField(
+                    // keyboardType: TextInputType.number,
+                    // inputFormatters: <TextInputFormatter>[
+                    //   WhitelistingTextInputFormatter.digitsOnly,
+                    // ],
+                    keyboardType: TextInputType.multiline,
+
+                    textAlign: TextAlign.end,
+                    maxLines: null,
+                    controller: _tecCertificationNumber,
+                    validator: (String v) {
+                      String value = v.trim();
+                      if (value.isEmpty) return 'الخانة فارغة';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'رقم التصديق',
+                      labelStyle: TextStyle(
+                        color: colorLabelText,
+                      ),
+                      hintText: '',
+                      hintStyle: TextStyle(
+                        color: colorHintText,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
             ),
             SizedBox(
               height: 8.0,
             ),
-            Center(
-              child: IconButton(
-                icon: Icon(Icons.file_upload),
-                onPressed: () async {
-                  images = await uploadFile();
-                  //print(images.first);
-                },
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: 50.0,
+                ),
+                Center(
+                  child: StatefulBuilder(
+                    builder: (BuildContext context, setState) {
+                      return ToggleButtons(
+                        borderColor: Colors.green[200],
+                        fillColor: Colors.green,
+                        borderWidth: 2,
+                        selectedBorderColor: Colors.green,
+                        selectedColor: Colors.white,
+                        borderRadius: BorderRadius.circular(20.0),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'صادرات',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'واردات',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                        onPressed: (int index) {
+                          setState(() {
+                            _isExport = index;
+                            for (int i = 0; i < isSelected.length; i++) {
+                              if (i == index) {
+                                isSelected[i] = true;
+                              } else {
+                                isSelected[i] = false;
+                              }
+                            }
+                          });
+                        },
+                        isSelected: isSelected,
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
+            ),
+            SizedBox(
+              height: 8.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: 80.0,
+                ),
+                Center(
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload),
+                    onPressed: () async {
+                      images = await uploadFile();
+                      //print(images.first);
+                    },
+                  ),
+                ),
+                SizedBox(width: 15.0),
+              ],
             ),
             SizedBox(height: 8.0),
           ],
@@ -1277,7 +1399,17 @@ class _FaxPageState extends State<FaxPage> {
       BuildContext context, String strTitle, int id, bool isAdd) {
     return AlertDialog(
       title: Text(strTitle),
-      content: _columnData(),
+      content:
+          // DraggableScrollbar.arrows(
+
+          //   backgroundColor: Colors.blue,
+          //   alwaysVisibleScrollThumb:
+          //       true, //use this to make scroll thumb always visible
+          //   // labelTextBuilder: (double offset) => Text("${offset ~/ 100}"),
+          //   controller: _controller1,
+          //   child:
+          _columnData(),
+      // ),
       actions: <Widget>[
         FlatButton(
           highlightColor: colorFlatHighLightPositive,
@@ -1339,6 +1471,7 @@ class _FaxPageState extends State<FaxPage> {
     mapData['sub_class'] = _subClass;
     mapData['person_send'] = _personSend;
     mapData['person_recieve'] = _personRecieve;
+    mapData['person_sub_recieve'] = _tecPersonSubRecieve.text.trim();
     mapData['is_export'] = _isExport.toString();
     int begin = 0;
     images.first = image64Data(images.first, begin);
@@ -1422,6 +1555,8 @@ class _FaxPageState extends State<FaxPage> {
     _personList = await pc.getDataPeople();
     _personList.sort(
         (a, b) => ('${a.rank}${a.name}').compareTo(('${b.rank}${b.name}')));
+    _personList.sort((a, b) =>
+        a.rank.name?.toLowerCase()?.compareTo(b.rank.name?.toLowerCase()));
     _personSend = _personList.first.rank.name + '/' + _personList.first.name;
     _personRecieve = _personList.first.rank.name + '/' + _personList.first.name;
     _personSendID = _personList.first.id;

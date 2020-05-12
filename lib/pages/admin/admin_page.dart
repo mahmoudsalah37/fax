@@ -1,4 +1,5 @@
 import 'package:dialog/dialogs/alert.dart';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:fax/controllers/al_v2/controllers.dart';
 import 'package:fax/controllers/users/users.dart';
 import 'package:fax/models/pages/user_model.dart';
@@ -7,6 +8,8 @@ import 'package:fax/styles/page/all/app_config.dart';
 import 'package:fax/widgets/all/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+
+final _controller = ScrollController();
 
 class AdminPage extends StatefulWidget {
   _AdminPageState createState() => _AdminPageState();
@@ -45,7 +48,7 @@ class _AdminPageState extends State<AdminPage> {
           _headPage(context),
           SizedBox(height: 4.0),
           //Body
-          _bodyPage()
+          _bodyPage(),SizedBox(height: 8.0),
         ],
       ),
     );
@@ -203,6 +206,9 @@ class _AdminPageState extends State<AdminPage> {
           Expanded(
             child: nameColumnTable('الاسم'),
           ),
+          SizedBox(
+            width: 15.0,
+          ),
           // Expanded(
           //   child: nameColumnTable('الرقم التسلسلي'),
           // ),
@@ -224,7 +230,7 @@ class _AdminPageState extends State<AdminPage> {
   //Body table
   Container _bodyTable() {
     return Container(
-      height: _ac.rH(80.0),
+      height: _ac.rH(75.0),
       //rows
       child: FutureBuilder<List<UsersModel>>(
         future: getDataUsers(),
@@ -239,111 +245,122 @@ class _AdminPageState extends State<AdminPage> {
             if (_checks.isNotEmpty) _checks.clear();
             if (_isCheckAll)
               _dataSearch.forEach((data) => _checks.add(data.id));
-            return ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: _dataSearch.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
+            return DraggableScrollbar.arrows(
+              backgroundColor: Colors.blue,
+              alwaysVisibleScrollThumb:
+                  true, //use this to make scroll thumb always visible
+              // labelTextBuilder: (double offset) => Text("${offset ~/ 100}"),
+              controller: _controller,
+              child: ListView.builder(
+                controller: _controller,
+                scrollDirection: Axis.vertical,
+                itemCount: _dataSearch.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      StatefulBuilder(
-                        builder: (BuildContext context, setState) {
-                          return Checkbox(
-                            value: _checks.contains(_dataSearch[index].id),
-                            activeColor: colorCheckBox,
-                            onChanged: (bool isCheck) async {
-                              int id = _dataSearch[index].id;
-                              isCheck ? _checks.add(id) : _checks.remove(id);
-                              setState(() {});
+                    child: Row(
+                      children: <Widget>[
+                        StatefulBuilder(
+                          builder: (BuildContext context, setState) {
+                            return Checkbox(
+                              value: _checks.contains(_dataSearch[index].id),
+                              activeColor: colorCheckBox,
+                              onChanged: (bool isCheck) async {
+                                int id = _dataSearch[index].id;
+                                isCheck ? _checks.add(id) : _checks.remove(id);
+                                setState(() {});
+                              },
+                            );
+                          },
+                        ),
+                        Expanded(
+                          child: dataCellRow(
+                              permissionSwitch(_dataSearch[index].permission)),
+                        ),
+                        Expanded(
+                          child: dataCellRow(_dataSearch[index].password),
+                        ),
+                        Expanded(
+                          child: dataCellRow(_dataSearch[index].userName),
+                        ),
+                        // Expanded(
+                        //   child: dataCellRow(_dataSearch[index].id.toString()),
+                        // ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: InkWell(
+                            child: Icon(
+                              Icons.visibility,
+                              color: Colors.blue,
+                            ),
+                            onTap: () {
+                              _tecUserName.text = _dataSearch[index].userName;
+                              _tecPassword.text = _dataSearch[index].password;
+                              _permissions = _dataSearch[index].permission;
+                              for (int i = 0; i < _isSelected.length; i++)
+                                if (i <= _permissions)
+                                  _isSelected[i] = true;
+                                else
+                                  _isSelected[i] = false;
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildViewDialog(
+                                        context, 'عرض البيانات', index),
+                              );
                             },
-                          );
-                        },
-                      ),
-                      Expanded(
-                        child: dataCellRow(
-                            permissionSwitch(_dataSearch[index].permission)),
-                      ),
-                      Expanded(
-                        child: dataCellRow(_dataSearch[index].password),
-                      ),
-                      Expanded(
-                        child: dataCellRow(_dataSearch[index].userName),
-                      ),
-                      // Expanded(
-                      //   child: dataCellRow(_dataSearch[index].id.toString()),
-                      // ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: InkWell(
-                          child: Icon(
-                            Icons.visibility,
-                            color: Colors.blue,
                           ),
-                          onTap: () {
-                            _tecUserName.text = _dataSearch[index].userName;
-                            _tecPassword.text = _dataSearch[index].password;
-                            _permissions = _dataSearch[index].permission;
-                            for (int i = 0; i < _isSelected.length; i++)
-                              if (i <= _permissions)
-                                _isSelected[i] = true;
-                              else
-                                _isSelected[i] = false;
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildViewDialog(
-                                      context, 'عرض البيانات', index),
-                            );
-                          },
                         ),
-                      ),
-                      //Edit icon
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: InkWell(
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.green,
+                        //Edit icon
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: InkWell(
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.green,
+                            ),
+                            onTap: () {
+                              _tecUserName.text = _dataSearch[index].userName;
+                              _tecPassword.text = _dataSearch[index].password;
+                              _permissions = _dataSearch[index].permission;
+                              for (int i = 0; i < _isSelected.length; i++)
+                                if (i <= _permissions)
+                                  _isSelected[i] = true;
+                                else
+                                  _isSelected[i] = false;
+
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildAddOrUpdateDialog(
+                                        context,
+                                        'تعديل البيانات',
+                                        _dataSearch[index].id,
+                                        false),
+                              );
+                            },
                           ),
-                          onTap: () {
-                            _tecUserName.text = _dataSearch[index].userName;
-                            _tecPassword.text = _dataSearch[index].password;
-                            _permissions = _dataSearch[index].permission;
-                            for (int i = 0; i < _isSelected.length; i++)
-                              if (i <= _permissions)
-                                _isSelected[i] = true;
-                              else
-                                _isSelected[i] = false;
-                            
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildAddOrUpdateDialog(
-                                      context,
-                                      'تعديل البيانات',
-                                      _dataSearch[index].id,
-                                      false),
-                            );
-                          },
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           } else if (snapshot.hasError) {}
           return Container(child: Center(child: CircularProgressIndicator()));
