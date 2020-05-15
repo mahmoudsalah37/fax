@@ -435,7 +435,7 @@ class _SubClassPageState extends State<SubClassPage> {
                 mapData['id'] = id.toString();
                 mapData['name'] = _tecNameMainClass.text.trim();
                 mapData['id_main_class'] = _mainClassID.toString();
-                response = await putData(strPath, mapData);
+                response = await editData(strPath, mapData);
               }
               if (response.statusCode >= 200 && response.statusCode <= 299) {
                 if (!isAdd) Navigator.of(context).pop();

@@ -423,7 +423,7 @@ class _RankPageState extends State<RankPage> {
                 mapData['name'] = _tecName.text.trim();
                 mapData['description'] = _tecDescription.text.trim();
 
-                response = await putData(strPath, mapData);
+                response = await editData(strPath, mapData);
               }
               if (response.statusCode >= 200 && response.statusCode <= 299) {
                 if (!isAdd) Navigator.of(context).pop();

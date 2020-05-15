@@ -398,7 +398,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
                 Map<String, dynamic> mapData = Map<String, dynamic>();
                 mapData['id'] = id.toString();
                 mapData['name'] = _tecNameMainClass.text.trim();
-                response = await putData(strPath, mapData);
+                response = await editData(strPath, mapData);
               }
               if (response.statusCode >= 200 && response.statusCode <= 299) {
                 if (!isAdd) Navigator.of(context).pop();

@@ -501,7 +501,7 @@ class _AdminPageState extends State<AdminPage> {
                 mapData['user_name'] = _tecUserName.text.trim();
                 mapData['password'] = _tecPassword.text.trim();
                 mapData['permission'] = _permissions.toString();
-                response = await putData(strPath, mapData);
+                response = await editData(strPath, mapData);
               }
               if (response.statusCode >= 200 && response.statusCode <= 299) {
                 if (!isAdd) Navigator.of(context).pop();
