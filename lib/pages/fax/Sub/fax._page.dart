@@ -323,8 +323,7 @@ class _FaxPageState extends State<FaxPage> {
                                 color: Colors.green,
                               ),
                               onTap: () {
-                                idFile = dataSearch[index].images;
-                                downloudFile();
+                                downloudFile(dataSearch[index].images);
                               },
                             ),
                           ),

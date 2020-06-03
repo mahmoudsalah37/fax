@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
         backgroundColorStart: Colors.indigo,
         backgroundColorEnd: Colors.cyan,
       ),
-      drawer: currentUser == null ? null : DrawerWidget(),
+      drawer: currentUser == null ? Container() : DrawerWidget(),
       body: SafeArea(
         child: Container(
           child: ListView(

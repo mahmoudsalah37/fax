@@ -16,7 +16,7 @@ class _ViewPageState extends State<ViewPage> {
     return selectModule(widget.page, widget.child);
   }
 
-  selectModule(int page, int child) {
+  Widget selectModule(int page, int child) {
     switch (widget.page) {
       case 0:
         return Classes(child);
@@ -24,7 +24,7 @@ class _ViewPageState extends State<ViewPage> {
         return People(child);
       case 2:
         return Faxes(child);
-        case 3:
+      case 3:
         return AdminPage();
     }
   }

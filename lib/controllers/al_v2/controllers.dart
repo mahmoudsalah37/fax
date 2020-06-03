@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:fax/widgets/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_html/html.dart' as html;
@@ -70,9 +69,8 @@ Future<String> getData(String strPath) async {
 //Add data
 Future<http.Response> postData(
     String strPath, Map<String, dynamic> mapData) async {
-  http.Response response = await http
-      .post('$domin/$strPath', body: mapData)
-      .catchError((onError) {
+  http.Response response =
+      await http.post('$domin/$strPath', body: mapData).catchError((onError) {
     print(onError.toString());
   });
   return response;
@@ -109,9 +107,7 @@ Future<bool> deleteData(String strPath, List<int> ids) async {
   bool done = false;
   String query = '';
   ids.forEach((id) => query = '${query}id=$id&');
-  await http
-      .delete('$domin/$strPath/deleteList?$query')
-      .whenComplete(() {
+  await http.delete('$domin/$strPath/deleteList?$query').whenComplete(() {
     done = true;
   }).catchError((onError) {
     done = false;
@@ -137,11 +133,10 @@ void popNavigationBarMenu(BuildContext context) async {
   if (MediaQuery.of(context).size.width < 1000.0) Navigator.pop(context);
 }
 
-void downloudFile() {
+void downloudFile(String fileName) {
   var a = html.document.createElement('a');
 
-  a.setAttribute('href',
-      '$mainDomin/data/$idFile');
+  a.setAttribute('href', '$mainDomin/data/$fileName');
   a.setAttribute('target', '_blank');
   a.setAttribute('download', 'file.docx');
   html.document.body.append(a);
@@ -162,7 +157,7 @@ startWebFilePicker(
   uploadInput.multiple = false;
   uploadInput.draggable = true;
   uploadInput.click();
-  Dialogs.showLoadingDialog(context, globalKeyloading);
+  // Dialogs.showLoadingDialog(context, globalKeyloading);
   uploadInput.onChange.listen((e) {
     final files = uploadInput.files;
     file = files[0];
@@ -170,7 +165,7 @@ startWebFilePicker(
 
     reader.onLoadEnd.listen((e) {
       if (file != null) _handleResult(reader.result);
-      Navigator.of(globalKeyloading.currentContext, rootNavigator: true).pop();
+      // Navigator.of(globalKeyloading.currentContext, rootNavigator: true).pop();
     });
     reader.readAsDataUrl(file);
   });
