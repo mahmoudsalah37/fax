@@ -18,7 +18,7 @@ DateFormat yearFormater = new DateFormat('yyyy');
 DateFormat dataFormater = new DateFormat().add_yMd();
 DateFormat monthFormater = new DateFormat('mm');
 double get getBodyTableHeight {
-  return ac.rH(100.0) - 192.0;
+  return ac.rH(100.0) - 210.0;
 }
 
 var scrollThumbBuilder = (Color backgroundColor,

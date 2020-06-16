@@ -67,48 +67,19 @@ BoxDecoration myBoxDecoration() {
 }
 
 Widget nameColumnTable(String strName, {double fontSize}) {
-  return
-      // Container(
-      /* decoration: BoxDecoration(
-      border: Border(
-        right: BorderSide(
+  return Expanded(
+    child: Center(
+      child: Text(
+        strName,
+        maxLines: 3,
+        style: TextStyle(
           color: Colors.black,
-          width: 2.0,
+          fontWeight: FontWeight.bold,
+          fontSize: fontSize,
         ),
       ),
     ),
-    */
-      /* padding: const EdgeInsets.all(4.0),
-    child: Wrap(
-        children: <Widget>[
-         
-
-        Text(
-      strName,
-      style: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.bold, 
-        fontSize: 11.0,
-      ),
-    ),
-    ],
-  ),
- 
- */
-      // child:
-      Flexible(
-    child: Text(
-      strName,
-      maxLines: 3,
-      style: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: fontSize,
-      ),
-    ),
-  )
-      // ),
-      ;
+  );
 }
 
 Widget dataCellRoww(String data, int numOfcell) {

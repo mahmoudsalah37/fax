@@ -4,7 +4,6 @@ import 'package:fax/models/page_model.dart';
 import 'package:fax/packages/provider/provider.dart';
 
 import 'home/home.dart';
-import 'widgets/all/view_page.dart';
 
 void main() => runApp(MyApp());
 

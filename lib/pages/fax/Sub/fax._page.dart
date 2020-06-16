@@ -185,7 +185,8 @@ class _FaxPageState extends State<FaxPage> {
                 })),
             SizedBox(height: 8.0),
             //Body table
-            _bodyTable()
+            _bodyTable(),
+            SizedBox(height: 8.0),
           ],
         ),
       ),

@@ -7,8 +7,8 @@ import 'package:universal_html/html.dart' as html;
 import 'dart:async';
 import 'package:http_parser/http_parser.dart';
 
-const String mainDomin = 'https://localhost:44392';
-// const String mainDomin = 'http://192.168.40.13';
+// const String mainDomin = 'https://localhost:44392';
+const String mainDomin = 'http://192.168.40.13';
 const String domin = '$mainDomin/api';
 List<int> selectedFile;
 Uint8List _bytesData;
@@ -106,8 +106,8 @@ Future<http.Response> editData(
 Future<bool> deleteData(String strPath, List<int> ids) async {
   bool done = false;
   String query = '';
-  ids.forEach((id) => query = '${query}id=$id&');
-  await http.delete('$domin/$strPath/deleteList?$query').whenComplete(() {
+  ids.forEach((id) => query = '${query}ids=$id&');
+  await http.delete('$domin/$strPath?$query').whenComplete(() {
     done = true;
   }).catchError((onError) {
     done = false;

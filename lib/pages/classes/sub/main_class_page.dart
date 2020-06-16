@@ -103,6 +103,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
           SizedBox(width: 20.0),
           //Delete icon
           if (currentUser.permission >= 2)
+            //Delete icon
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: InkWell(
@@ -184,6 +185,7 @@ class _MainCLassPageState extends State<MainCLassPage> {
       decoration: myBoxDecoration(),
       //Columns Heads
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Checkbox(
             value: this._isCheckAll,
@@ -193,9 +195,8 @@ class _MainCLassPageState extends State<MainCLassPage> {
               setState(() {});
             },
           ),
-          Expanded(
-            child: nameColumnTable('القسم الرئيسي'),
-          ),
+           nameColumnTable('القسم الرئيسي'),
+
           // Expanded(
           //   child: nameColumnTable('الرقم التسلسلي'),
           // ),
